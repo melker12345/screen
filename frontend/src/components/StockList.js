@@ -77,7 +77,7 @@ const StockList = ({ selectedIndicators }) => {
         <div className="bg-white rounded-lg border-2 border-dashed border-gray-300 p-12">
           <div className="text-center">
             <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01" />
             </svg>
             <h3 className="mt-4 text-lg font-medium text-gray-900">No matching stocks</h3>
             <p className="mt-2 text-sm text-gray-500 max-w-sm mx-auto">
@@ -116,7 +116,7 @@ const StockList = ({ selectedIndicators }) => {
                     <span className="text-sm font-medium text-gray-500">Date</span>
                     <span className="text-sm text-gray-900">{stockDetails.date}</span>
                   </div>
-                  {stockDetails.indicators.RSI && (
+                  {stockDetails.indicators && stockDetails.indicators.RSI && (
                     <div className="flex justify-between items-center py-2 border-t border-gray-100">
                       <span className="text-sm font-medium text-gray-500">RSI</span>
                       <span className={`text-sm font-semibold ${
@@ -128,7 +128,7 @@ const StockList = ({ selectedIndicators }) => {
                       </span>
                     </div>
                   )}
-                  {stockDetails.indicators.MACD && (
+                  {stockDetails.indicators && stockDetails.indicators.MACD && (
                     <div className="space-y-2 py-2 border-t border-gray-100">
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium text-gray-500">MACD</span>

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { Box, AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 import IndicatorSelector from './components/IndicatorSelector';
 import StockList from './components/StockList';
+import Documentation from './components/Documentation';
 
 function App() {
-  const [selectedCriteria, setSelectedCriteria] = useState({});
+  const [selectedIndicators, setSelectedIndicators] = useState({});
   const [matchingStocks, setMatchingStocks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentView, setCurrentView] = useState('screener'); // 'screener' or 'docs'
 
   const indicatorOptions = {
     RSI: {
@@ -31,12 +34,12 @@ function App() {
     }
   };
 
-  const handleIndicatorSelect = (criteria) => {
-    setSelectedCriteria(criteria);
+  const handleIndicatorSelect = (indicators) => {
+    setSelectedIndicators(indicators);
   };
 
   const screenStocks = async () => {
-    if (Object.keys(selectedCriteria).length === 0) {
+    if (Object.keys(selectedIndicators).length === 0) {
       alert('Please select at least one indicator');
       return;
     }
@@ -49,16 +52,16 @@ function App() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          indicators: selectedCriteria
+          indicators: selectedIndicators
         }),
       });
-
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch matching stocks');
+        throw new Error('Network response was not ok');
       }
-
+      
       const data = await response.json();
-      setMatchingStocks(data);
+      setMatchingStocks(data.stocks || []);
     } catch (error) {
       console.error('Error:', error);
       alert('Failed to screen stocks. Please try again.');
@@ -68,52 +71,48 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <nav className="bg-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-2xl font-bold text-indigo-600">Stock Screener</h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Swedish Stock Screener
+          </Typography>
+          <Button 
+            color="inherit" 
+            onClick={() => setCurrentView('screener')}
+            sx={{ mr: 2 }}
+          >
+            Screener
+          </Button>
+          <Button 
+            color="inherit" 
+            onClick={() => setCurrentView('docs')}
+          >
+            Documentation
+          </Button>
+        </Toolbar>
+      </AppBar>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          <div className="bg-white overflow-hidden shadow-xl rounded-lg">
-            <div className="p-6">
-              <IndicatorSelector 
-                onSelectIndicators={handleIndicatorSelect} 
-                indicatorOptions={indicatorOptions}
-                onScreenStocks={screenStocks}
-                loading={loading}
-              />
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow-xl rounded-lg">
-            <div className="p-6">
-              <StockList 
-                selectedIndicators={selectedCriteria} 
-                matchingStocks={matchingStocks} 
-                loading={loading}
-              />
-            </div>
-          </div>
-        </div>
-      </main>
-
-      <footer className="bg-white shadow-lg mt-12">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500">
-            Stock Screener {new Date().getFullYear()}
-          </p>
-        </div>
-      </footer>
-    </div>
+      <Container maxWidth="lg" sx={{ mt: 4 }}>
+        {currentView === 'screener' ? (
+          <>
+            <IndicatorSelector
+              options={indicatorOptions}
+              onSelectIndicators={handleIndicatorSelect}
+              onScreenStocks={screenStocks}
+              loading={loading}
+            />
+            <StockList
+              stocks={matchingStocks}
+              loading={loading}
+              selectedIndicators={selectedIndicators}
+            />
+          </>
+        ) : (
+          <Documentation />
+        )}
+      </Container>
+    </Box>
   );
 }
 
